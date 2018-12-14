@@ -12,11 +12,10 @@ use crypt\Crypt;
 
 class AdminLog extends Base
 {
-
     //日志列表
     public function index()
     {
-        $model = new AdminLogs();
+        $model      = new AdminLogs();
         $page_param = ['query' => []];
         if (isset($this->param['title']) && !empty($this->param['title'])) {
             $page_param['query']['title'] = $this->param['title'];
@@ -26,10 +25,10 @@ class AdminLog extends Base
         }
 
         if (isset($this->param['user_id']) && ($this->param['user_id']) > 0) {
-            $page_param['query']['user_id'] = $this->param['user_id'];
-            $where_user                       = $this->param['user_id'];
-            $model->where('user_id=' . $where_user);
-            $this->assign('user_id', $this->param['user_id']);
+            $user_id                        = $this->param['user_id'];
+            $page_param['query']['user_id'] = $user_id;
+            $model->where('user_id', $user_id);
+            $this->assign('user_id', $user_id);
         }
 
         if (isset($this->param['start_date']) && !empty($this->param['start_date'])) {
@@ -46,15 +45,15 @@ class AdminLog extends Base
             $this->assign('end_date', $this->param['end_date']);
         }
 
-        $log_list = $model->field('id,user_id,title,log_url,log_type,log_ip,create_time')
+        $list = $model->field('id,user_id,title,log_url,log_type,log_ip,create_time')
             ->with('adminUser')
             ->order('id desc')
             ->paginate($this->webData['list_rows'], false, $page_param);
 
         $this->assign([
-            'list'      => $log_list,
-            'page'      => $log_list->render(),
-            'total'     => $log_list->total(),
+            'list'      => $list,
+            'page'      => $list->render(),
+            'total'     => $list->total(),
             'user_list' => AdminUsers::all()
         ]);
 

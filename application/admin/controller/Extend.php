@@ -6,28 +6,79 @@
 
 namespace app\admin\controller;
 
-use app\admin\model\AdminMailLogs;
-use app\admin\model\AdminMenus;
-use app\admin\model\ExcelExamples;
-use email\SendMail;
-use Overtrue\EasySms\EasySms;
-use Parsedown;
-use Endroid\QrCode\QrCode;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Endroid\QrCode\ErrorCorrectionLevel;
-use PHPExcel;
-use PHPExcel_IOFactory;
+use app\admin\model\AdminMailLogs;
+use app\admin\model\ExcelExamples;
+use Overtrue\EasySms\EasySms;
+use Endroid\QrCode\QrCode;
+use email\SendMail;
+use tools\Ueditor;
 use tools\AliOss;
 use tools\Qiniu;
-use tools\Ueditor;
+use Parsedown;
 
 class Extend extends Base
 {
+    protected $extendUrl = [
+        [
+            'id'    => 1,
+            'url'   => 'admin/extend/email',
+            'icon'  => 'fa-info',
+            'title' => '邮件发送',
+        ],
+        [
+            'id'    => 2,
+            'url'   => 'admin/extend/sms',
+            'icon'  => 'fa-info',
+            'title' => '短信发送',
+        ],
+        [
+            'id'    => 3,
+            'url'   => 'admin/extend/markdown',
+            'icon'  => 'fa-info',
+            'title' => 'MarkDown编辑器',
+        ],
+        [
+            'id'    => 4,
+            'url'   => 'admin/extend/qrcode',
+            'icon'  => 'fa-info',
+            'title' => '二维码生成',
+        ],
+        [
+            'id'    => 5,
+            'url'   => 'admin/extend/ueditor',
+            'icon'  => 'fa-info',
+            'title' => 'UEditor编辑器',
+        ],
+        [
+            'id'    => 6,
+            'url'   => 'admin/extend/aliyunoss',
+            'icon'  => 'fa-info',
+            'title' => '阿里云oss',
+        ],
+
+        [
+            'id'    => 7,
+            'url'   => 'admin/extend/qiniu',
+            'icon'  => 'fa-info',
+            'title' => '七牛云存储',
+        ],
+
+        [
+            'id'    => 8,
+            'url'   => 'admin/extend/excel',
+            'icon'  => 'fa-info',
+            'title' => 'excel',
+        ],
+    ];
+
     //扩展列表
     public function index()
     {
 
-        $extend = AdminMenus::get(['url' => 'admin/extend/index']);
-        $list  = AdminMenus::all(['parent_id' => $extend->id]);
+        $list   = $this->extendUrl;
         $colors = [
             'bg-aqua'   => 'bg-aqua',
             'bg-green'  => 'bg-green',
@@ -39,7 +90,7 @@ class Extend extends Base
         ];
 
         $this->assign([
-            'list' => $list,
+            'list'   => $list,
             'colors' => $colors
         ]);
 
@@ -112,7 +163,7 @@ class Extend extends Base
             }
 
             if ($success && $result['alidayu']['status'] == 'success') {
-                return $this->success('发送成功',self::URL_CURRENT);
+                return $this->success('发送成功', self::URL_CURRENT);
             }
 
             return $this->error($msg);
@@ -176,7 +227,7 @@ class Extend extends Base
         if ($this->request->isPost()) {
             $param = $this->request->param(false);
 
-            if ( isset($param['content'])) {
+            if (isset($param['content'])) {
                 $this->assign([
                     'content' => $param['content'],
 
@@ -250,7 +301,7 @@ class Extend extends Base
                     'name' => $info->getFilename()
                 ];
 
-                $qiniu = new Qiniu();
+                $qiniu  = new Qiniu();
                 $data   = $qiniu->upload($file_info);
                 $result = config('qiniu.url') . $data[0]['key'];
                 return $this->success('success', self::URL_CURRENT, $result);
@@ -269,14 +320,14 @@ class Extend extends Base
             if (!$file) {
                 return $this->error('请上传文件');
             }
-            $info = $file->validate(['ext' => 'xlsx','size' => config('file_upload_max_size')])->move(ROOT_PATH . 'uploads' . DS . 'excel');
+            $info = $file->validate(['ext' => 'xlsx', 'size' => config('file_upload_max_size')])->move(ROOT_PATH . 'uploads' . DS . 'excel');
             if ($info) {
 
                 $file_name    = $info->getPathname();
-                $objReader    = PHPExcel_IOFactory::createReader('Excel2007');
-                $obj_PHPExcel = $objReader->load($file_name, $encode = 'utf-8');  //加载文件内容,编码utf-8
-                $excel_array  = $obj_PHPExcel->getsheet(0)->toArray();   //转换为数组格式
+                $spreadsheet    = IOFactory::load($file_name);
+                $excel_array = $spreadsheet->getActiveSheet()->toArray();
                 array_shift($excel_array);  //删除第一个数组(标题);
+                
                 $person = [];
                 foreach ($excel_array as $k => $v) {
                     $person[$k]['name'] = $v[0];
@@ -319,7 +370,7 @@ class Extend extends Base
 
         $this->assign([
             'list' => $list,
-            'page'  => $list->render()
+            'page' => $list->render()
         ]);
 
         return $this->fetch();
@@ -327,14 +378,15 @@ class Extend extends Base
 
 
     //导出方法
-    function export($head, $body, $name = null, $version = '2007')
+    function export($head, $body, $name = null, $version = '2007',$title='记录')
     {
+        //config('app_trace',false);
         try {
             // 输出 Excel 文件头
             $name = empty($name) ? date('Y-m-d-H-i-s') : $name;
 
-            $objPHPExcel   = new PHPExcel();
-            $sheetPHPExcel = $objPHPExcel->setActiveSheetIndex(0);
+            $spreadsheet   = new Spreadsheet();
+            $sheetPHPExcel = $spreadsheet->setActiveSheetIndex(0);
             $char_index    = range("A", "Z");
 
             // Excel 表格头
@@ -342,12 +394,14 @@ class Extend extends Base
                 $sheetPHPExcel->setCellValue("{$char_index[$key]}1", $val);
             }
 
+            $spreadsheet->getActiveSheet()->setTitle($title);
+
             // Excel body 部分
             foreach ($body as $key => $val) {
                 $row = $key + 2;
                 $col = 0;
                 foreach ($val as $k => $v) {
-                    $sheetPHPExcel->setCellValue("{$char_index[$col]}{$row}", $v);
+                    $spreadsheet->getActiveSheet()->setCellValue("{$char_index[$col]}{$row}", $v);
                     $col++;
                 }
             }
@@ -357,11 +411,11 @@ class Extend extends Base
                 '2007' => [
                     'mime'       => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                     'ext'        => '.xlsx',
-                    'write_type' => 'Excel2007',
+                    'write_type' => 'Xlsx',
                 ],
                 '2003' => ['mime'       => 'application/vnd.ms-excel',
                            'ext'        => '.xls',
-                           'write_type' => 'Excel5',
+                           'write_type' => 'Xls',
                 ],
                 'pdf'  => ['mime'       => 'application/pdf',
                            'ext'        => '.pdf',
@@ -376,16 +430,8 @@ class Extend extends Base
             header('Content-Type: ' . $version_opt[$version]['mime']);
             header('Content-Disposition: attachment;filename="' . $name . $version_opt[$version]['ext'] . '"');
             header('Cache-Control: max-age=0');
-            // If you're serving to IE 9, then the following may be needed
-            header('Cache-Control: max-age=1');
 
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
-
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, $version_opt[$version]['write_type']);
+            $objWriter = IOFactory::createWriter($spreadsheet, 'Xlsx');
             return $objWriter->save('php://output');
         } catch (\Exception $e) {
             return $e->getMessage();

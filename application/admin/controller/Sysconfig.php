@@ -10,29 +10,27 @@ use app\admin\model\Sysconfigs;
 
 class Sysconfig extends Base
 {
-    //列表
     public function index()
     {
-        $sysconfigs = new Sysconfigs();
-        $configs    = $sysconfigs->paginate($this->webData['list_rows']);
+        $model = new Sysconfigs();
+        $list    = $model->paginate($this->webData['list_rows']);
 
         $this->assign([
-            'list' => $configs,
-            'total' => $configs->total(),
-            'page'  => $configs->render()
+            'list' => $list,
+            'total' => $list->total(),
+            'page'  => $list->render()
         ]);
         return $this->fetch();
     }
 
 
-    //添加设置
     public function add()
     {
         if ($this->request->isPost()) {
             $param  = $this->param;
-            $result = $this->validate($param, 'Sysconfig.add');
-            if (true !== $result) {
-                return $this->error($result);
+            $result_validate = $this->validate($param, 'Sysconfig.add');
+            if (true !== $result_validate) {
+                return $this->error($result_validate);
             }
             $result = Sysconfigs::create($param);
             if ($result) {
@@ -44,14 +42,13 @@ class Sysconfig extends Base
     }
 
 
-    //修改设置
     public function edit()
     {
         $info = Sysconfigs::get($this->id);
         if ($this->request->isPost()) {
-            $result = $this->validate($this->param, 'Sysconfig.edit');
-            if (true !== $result) {
-                return $this->error($result);
+            $result_validate = $this->validate($this->param, 'Sysconfig.edit');
+            if (true !== $result_validate) {
+                return $this->error($result_validate);
             }
             if (false !== $info->save($this->param)) {
                 return $this->success();
@@ -66,7 +63,6 @@ class Sysconfig extends Base
     }
 
 
-    //删除设置
     public function del()
     {
         $protected_ids = range(1, 100);
