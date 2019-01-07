@@ -62,7 +62,7 @@ class Tree
     {
         $parent_id = '';
         $nstr      = '';
-        $number    = 0;
+        $number    = 1;
         $child     = $this->get_child($myid);
 
         if (is_array($child)) {
