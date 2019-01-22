@@ -15,12 +15,6 @@ return [
         '__PLUGINS__' => '/static/admin/plugins',
         '__AVATAR__' => '/uploads/admin/avatar',
     ],
-
-    'template'                   => [
-        'layout_on'       => true,
-        'layout_name'     => 'template/layout',
-        'layout_item'     => '[__REPLACE__]',
-    ],
     //分页配置
     'paginate'                   => [
         'type'      => '\tools\Bearpage',
