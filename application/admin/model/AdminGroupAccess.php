@@ -12,11 +12,11 @@ class AdminGroupAccess extends Admin
 
     public function adminUser()
     {
-        return $this->belongsTo('AdminUsers');
+        return $this->belongsTo('AdminUser');
     }
 
     public function adminGroup()
     {
-        return $this->belongsTo('AdminGroups','group_id','id')->field('id,name');
+        return $this->belongsTo('AdminGroup','group_id','id')->field('id,name');
     }
 }

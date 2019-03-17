@@ -12,7 +12,7 @@ class SyslogTrace extends Admin
 
     //关联日志
     public function syslog(){
-        return $this->belongsTo('Syslogs','log_id','id');
+        return $this->belongsTo('Syslog','log_id','id');
     }
 
     //trace获取器

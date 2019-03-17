@@ -6,7 +6,7 @@
 
 namespace app\common\exception;
 
-use app\admin\model\Syslogs;
+use app\admin\model\Syslog;
 use Exception;
 use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\ErrorLogHandler;
@@ -41,7 +41,7 @@ class LogException extends Handle
         ];
 
         $trace_data = ['trace'=>$trace];
-        $syslog = Syslogs::create($log_data);
+        $syslog = Syslog::create($log_data);
         if($syslog){
             $syslog->syslogTrace()->save($trace_data);
         }

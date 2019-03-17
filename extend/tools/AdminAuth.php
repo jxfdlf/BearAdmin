@@ -13,7 +13,7 @@ use think\Session;
 use think\Cookie;
 use think\Request;
 use think\Loader;
-use app\admin\model\AdminLogs;
+use app\admin\model\AdminLog;
 
 /**
  * 权限认证类
@@ -26,10 +26,10 @@ class AdminAuth
     protected $config = [
         'auth_on'           => 1, // 权限开关
         'auth_type'         => 1, // 认证方式，1为实时认证；2为登录认证。
-        'auth_group'        => 'admin_groups', // 用户组数据表名
+        'auth_group'        => 'admin_group', // 用户组数据表名
         'auth_group_access' => 'auth_group_access', // 用户-用户组关系表
-        'auth_rule'         => 'admin_menus', // 权限规则表
-        'auth_user'         => 'admin_users', // 用户信息表
+        'auth_rule'         => 'admin_menu', // 权限规则表
+        'auth_user'         => 'admin_user', // 用户信息表
     ];
     static $crypt_key;
     
@@ -274,7 +274,7 @@ class AdminAuth
             'data' => $crypt_data
         ];
 
-        $log = AdminLogs::create($data);
+        $log = AdminLog::create($data);
         if ($log) {
             return $log->adminLogData()->save($log_data);
         }
@@ -362,7 +362,7 @@ class AdminAuth
             $map_menu['id'] = ['in', $idss];
         }
 
-        return Db::name('admin_menus')->where($map_menu)->order('sort_id asc,id asc')->field('id,title,url,icon,is_show,parent_id')->column('*', 'id');
+        return Db::name($this->config['auth_rule'])->where($map_menu)->order('sort_id asc,id asc')->field('id,title,url,icon,is_show,parent_id')->column('*', 'id');
     }
     
     

@@ -6,8 +6,8 @@
 
 namespace app\admin\controller;
 
-use app\admin\model\AdminMenus;
-use app\admin\model\Sysconfigs;
+use app\admin\model\AdminMenu;
+use app\admin\model\Sysconfig;
 use PHPExcel;
 use PHPExcel_IOFactory;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -17,7 +17,7 @@ use tools\AdminAuth;
 use tools\Tree;
 use think\Request;
 use think\Session;
-use app\admin\model\AdminUsers;
+use app\admin\model\AdminUser;
 
 class Base extends Controller
 {
@@ -81,7 +81,7 @@ class Base extends Controller
     public function _initialize()
     {
 
-        $menu_info              = AdminMenus::get(['url' => $this->url]);
+        $menu_info              = AdminMenu::get(['url' => $this->url]);
         $this->webData['title'] = $menu_info['title'];
         $log_type               = $menu_info['log_type'];
         //如果需要验证
@@ -132,7 +132,7 @@ class Base extends Controller
         }
 
         //用户信息
-        $user_info = AdminUsers::get($this->uid);
+        $user_info = AdminUser::get($this->uid);
 
         $this->webData['user_info'] = $user_info;
         //分页记录数处理
@@ -330,7 +330,7 @@ class Base extends Controller
             'showFormFooterResetButton'  => $this->showFormFooterResetButton,
         ]);
 
-        $backend_name = Sysconfigs::get(function ($query){
+        $backend_name = Sysconfig::get(function ($query){
             $query->where('code','backend_name')->where('status',1);
         });
 
