@@ -9,7 +9,7 @@ namespace tools;
 
 use think\Paginator;
 
-class Bearpage extends Paginator
+class BearPage extends Paginator
 {
 
     /**

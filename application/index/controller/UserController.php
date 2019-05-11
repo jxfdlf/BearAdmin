@@ -5,7 +5,7 @@
  */
 namespace app\index\controller;
 
-class User
+class UserController
 {
     public function index(){
         return 'user';

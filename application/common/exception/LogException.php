@@ -33,7 +33,6 @@ class LogException extends Handle
         $e_line    = $e->getLine();
         $e_message = $e->getMessage();
         $trace = $e->getTraceAsString();
-
         $log_data = [
             'file'=>$e_file,
             'line'=>$e_line,

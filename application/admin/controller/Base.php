@@ -8,8 +8,6 @@ namespace app\admin\controller;
 
 use app\admin\model\AdminMenu;
 use app\admin\model\Sysconfig;
-use PHPExcel;
-use PHPExcel_IOFactory;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use think\Controller;

@@ -23,7 +23,7 @@ return [
     ],
     //分页配置
     'paginate'                   => [
-        'type'      => '\tools\Bearpage',
+        'type'      => '\tools\BearPage',
         'var_page'  => 'page',
         'list_rows' => 10,
     ],

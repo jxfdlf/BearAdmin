@@ -8,7 +8,7 @@ namespace app\index\controller;
 use anerg\OAuth2\OAuth;
 use think\Config;
 
-class Auth extends Controller
+class AuthController extends Controller
 {
     public function qq(){
         $config   = Config::get('qq_login');

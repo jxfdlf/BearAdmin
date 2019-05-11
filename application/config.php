@@ -256,7 +256,6 @@ return [
     ],
 
 
-
     /**
      * 应用加密字符串
      * 生成api token和加密cookie的时候使用
@@ -275,8 +274,8 @@ return [
     ],
 
 
-    'qq_login'          => [
-        'app_id'    => '填写你的',
+    'qq_login'     => [
+        'app_id'     => '填写你的',
         'app_secret' => '',
         'scope'      => 'get_user_info',
         'callback'   => [
@@ -286,10 +285,10 @@ return [
     ],
 
     // 设置空模块名为admin
-    'empty_module'      => 'admin',
+    'empty_module' => 'admin',
 
     //极验id和key
-    'geetest'           => [
+    'geetest'      => [
         'id'  => '填写你的id',
         'key' => '填写你的key'
     ],
@@ -298,14 +297,6 @@ return [
         // 定义404错误的重定向页面地址
         404 => ROOT_PATH . 'public/404.html',
         // 还可以定义其它的HTTP status
-    ],
-
-    'reward_url' => [
-        'wechat' => 'wxp://f2f0nlKFenUs_W0F4TfvABAjAigvkbphDKjV',
-        'alipay' => 'HTTPS://QR.ALIPAY.COM/FKX02237XBDM3VGBVXTNC9',
-        'jd'     => 'https://h5pay.jd.com/c2cIndex?t=70b4c1a48b1a923eb1ecc283ba122f8567c7cda70c18f6bd38fc02a0064b8b03e0b33641d759bf770a4ef43a3344ef1e',
-        'qq'     => 'https://i.qianbao.qq.com/wallet/sqrcode.htm?m=tenpay&a=1&u=8553151',
-        'unkown' => '/',
     ],
 
     //短信配置
@@ -319,7 +310,7 @@ return [
             'strategy' => \Overtrue\EasySms\Strategies\OrderStrategy::class,
             // 默认可用的发送网关
             'gateways' => [
-                'alidayu' // ,'yunpian', 'aliyun',
+                'aliyun', 'alidayu' // ,'yunpian',
             ],
         ],
         // 可用的网关配置
@@ -327,22 +318,17 @@ return [
             'errorlog' => [
                 'file' => ROOT_PATH . 'runtime/smslog/sms.log',
             ],
+            'aliyun'   => [
+                'access_key_id'     => '',
+                'access_key_secret' => '',
+                'sign_name'         => '',
+            ],
             'alidayu'  => [
                 'app_key'    => 'appkey换成自己的',
                 'app_secret' => 'secret换成自己的',
                 'sign_name'  => '签名换成自己的',
                 'tpl'        => 'SMS_85205029'
             ]
-            /*,
-            'yunpian' => [
-                'api_key' => '824f0ff2f71cab52936axxxxxxxxxx',
-            ],
-            'aliyun' => [
-                'access_key_id' => '',
-                'access_key_secret' => '',
-                'sign_name' => '',
-            ],*/
-
         ],
     ],
 
@@ -356,17 +342,17 @@ return [
     ],
 
     //七牛云存储
-    'qiniu' => [
+    'qiniu'      => [
         'AccessKey' => '',
         'SecretKey' => '',
-        'Bucket'=>'',
-        'url'=>'http://demo.bkt.clouddn.com/'
+        'Bucket'    => '',
+        'url'       => 'http://demo.bkt.clouddn.com/'
     ],
     //附件配置
-    'attchment'=>[
-        'path'=>ROOT_PATH.'public/uploads/attachment/',  //上传目录配置（相对于根目录）
-        'url'=>'/uploads/attachment/',  //url（相对于web目录）
-        'validate'=>[
+    'attchment'  => [
+        'path'     => ROOT_PATH . 'public/uploads/attachment/',  //上传目录配置（相对于根目录）
+        'url'      => '/uploads/attachment/',  //url（相对于web目录）
+        'validate' => [
             //默认不超过50mb
             'size' => 52428800,
             //常用后缀
